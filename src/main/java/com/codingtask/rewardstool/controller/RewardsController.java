@@ -11,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/rewards")
+@RequestMapping("/rewards")
 public class RewardsController {
     private final RewardsService rewardsService;
 
     public RewardsController(RewardsService rewardsService) {
         this.rewardsService = rewardsService;
     }
-
 
     @GetMapping("/monthly/{customerId}")
     public ResponseEntity<RewardResponse> getMonthlyRewards(@PathVariable String customerId) {

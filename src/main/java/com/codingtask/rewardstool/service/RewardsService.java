@@ -7,8 +7,13 @@ import com.codingtask.rewardstool.model.Transaction;
 import com.codingtask.rewardstool.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class RewardsService {
@@ -22,24 +27,65 @@ public class RewardsService {
     public RewardResponse calculateMonthlyRewards(String customerId) {
         List<Transaction> transactions = transactionRepository.findByCustomerId(customerId);
         List<MonthlyReward> monthlyRewards = new ArrayList<>();
-        // Logic to calculate monthly rewards based on the transactions
 
-        // Dummy data for illustration
-        monthlyRewards.add(new MonthlyReward("2023", "January", 50));
-        monthlyRewards.add(new MonthlyReward("2023", "February", 75));
-        monthlyRewards.add(new MonthlyReward("2023", "March", 100));
+        // Group transactions by year and month
+        Map<String, Map<String, List<Transaction>>> transactionsByYearAndMonth = transactions.stream()
+                .collect(Collectors.groupingBy(transaction -> getYear(transaction.getDate()),
+                        Collectors.groupingBy(transaction -> getMonth(transaction.getDate()))));
+
+        // Calculate rewards for each year and month
+        for (String year : transactionsByYearAndMonth.keySet()) {
+            Map<String, List<Transaction>> transactionsByMonth = transactionsByYearAndMonth.get(year);
+
+            for (String month : transactionsByMonth.keySet()) {
+                List<Transaction> transactionsInMonth = transactionsByMonth.get(month);
+
+                int totalPoints = 0;
+                for (Transaction transaction : transactionsInMonth) {
+                    double purchaseAmount = transaction.getPurchaseAmount();
+                    int points = calculateRewardPoints(purchaseAmount);
+                    totalPoints += points;
+                }
+
+                monthlyRewards.add(new MonthlyReward(year, month, totalPoints));
+            }
+        }
 
         return new RewardResponse(customerId, monthlyRewards);
     }
 
+
     public TotalPointsResponse calculateTotalRewards(String customerId) {
         List<Transaction> transactions = transactionRepository.findByCustomerId(customerId);
         int totalPoints = 0;
-        // Logic to calculate total rewards based on the transactions
 
-        // Dummy data for illustration
-        totalPoints = 300;
+        for (Transaction transaction : transactions) {
+            double purchaseAmount = transaction.getPurchaseAmount();
+            int points = calculateRewardPoints(purchaseAmount);
+            totalPoints += points;
+        }
 
         return new TotalPointsResponse(customerId, totalPoints);
+    }
+
+    private int calculateRewardPoints(double purchaseAmount) {
+        int rewardPoints = 0;
+        if (purchaseAmount > 100) {
+            double pointsAbove100 = purchaseAmount - 100;
+            rewardPoints += pointsAbove100 * 2;
+        }
+        if (purchaseAmount > 50) {
+            double pointsAbove50 = Math.min(purchaseAmount, 100) - 50;
+            rewardPoints += pointsAbove50;
+        }
+        return rewardPoints;
+    }
+
+    private String getYear(Date date) {
+        return YearMonth.from(date.toInstant()).getYear() + "";
+    }
+
+    private String getMonth(Date date) {
+        return YearMonth.from(date.toInstant()).format(DateTimeFormatter.ofPattern("MMMM"));
     }
 }

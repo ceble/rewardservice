@@ -2,14 +2,14 @@ package com.codingtask.rewardstool.model;
 
 import org.springframework.data.annotation.Id;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class Transaction {
     @Id
     private String transactionId;
     private String customerId;
     private double purchaseAmount;
-    private LocalDate date;
+    private Date date;
 
     public String getTransactionId() {
         return transactionId;
@@ -35,11 +35,11 @@ public class Transaction {
         this.purchaseAmount = purchaseAmount;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }
