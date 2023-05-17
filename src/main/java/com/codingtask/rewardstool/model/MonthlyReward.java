@@ -1,29 +1,29 @@
 package com.codingtask.rewardstool.model;
 
-public class MonthlyRewards {
-    private int year;
-    private int month;
+public class MonthlyReward {
+    private String year;
+    private String month;
     private int rewardPoints;
 
-    public MonthlyRewards(int year, int month, int rewardPoints) {
+    public MonthlyReward(String year, String month, int rewardPoints) {
         this.year = year;
         this.month = month;
         this.rewardPoints = rewardPoints;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
-    public int getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(int month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 
@@ -35,4 +35,5 @@ public class MonthlyRewards {
         this.rewardPoints = rewardPoints;
     }
 }
+
 
