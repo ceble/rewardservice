@@ -2,36 +2,33 @@ package com.codingtask.rewardstool.controller;
 
 import com.codingtask.rewardstool.model.RewardResponse;
 import com.codingtask.rewardstool.model.TotalPointsResponse;
-import com.codingtask.rewardstool.model.Transaction;
-import com.codingtask.rewardstool.service.TransactionService;
+import com.codingtask.rewardstool.service.RewardsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/rewards")
 public class RewardsController {
-    private final TransactionService transactionService;
+    private final RewardsService rewardsService;
 
-    public RewardsController(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public RewardsController(RewardsService rewardsService) {
+        this.rewardsService = rewardsService;
     }
 
-    @PostMapping("/transactions")
-    public ResponseEntity<Transaction> createTransaction(@RequestBody Transaction transaction) {
-        Transaction createdTransaction = transactionService.createTransaction(transaction);
-        return new ResponseEntity<>(createdTransaction, HttpStatus.CREATED);
-    }
 
     @GetMapping("/monthly/{customerId}")
     public ResponseEntity<RewardResponse> getMonthlyRewards(@PathVariable String customerId) {
-        RewardResponse rewards = transactionService.calculateMonthlyRewards(customerId);
+        RewardResponse rewards = rewardsService.calculateMonthlyRewards(customerId);
         return new ResponseEntity<>(rewards, HttpStatus.OK);
     }
 
     @GetMapping("/total/{customerId}")
     public ResponseEntity<TotalPointsResponse> getTotalRewards(@PathVariable String customerId) {
-        TotalPointsResponse totalPoints = transactionService.calculateTotalRewards(customerId);
+        TotalPointsResponse totalPoints = rewardsService.calculateTotalRewards(customerId);
         return new ResponseEntity<>(totalPoints, HttpStatus.OK);
     }
 }
