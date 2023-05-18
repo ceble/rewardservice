@@ -7,10 +7,9 @@ import com.codingtask.rewardstool.model.Transaction;
 import com.codingtask.rewardstool.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.YearMonth;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,12 +28,12 @@ public class RewardsService {
         List<MonthlyReward> monthlyRewards = new ArrayList<>();
 
         // Group transactions by year and month
-        Map<String, Map<String, List<Transaction>>> transactionsByYearAndMonth = transactions.stream()
+        Map<Integer, Map<String, List<Transaction>>> transactionsByYearAndMonth = transactions.stream()
                 .collect(Collectors.groupingBy(transaction -> getYear(transaction.getDate()),
                         Collectors.groupingBy(transaction -> getMonth(transaction.getDate()))));
 
         // Calculate rewards for each year and month
-        for (String year : transactionsByYearAndMonth.keySet()) {
+        for (Integer year : transactionsByYearAndMonth.keySet()) {
             Map<String, List<Transaction>> transactionsByMonth = transactionsByYearAndMonth.get(year);
 
             for (String month : transactionsByMonth.keySet()) {
@@ -47,7 +46,7 @@ public class RewardsService {
                     totalPoints += points;
                 }
 
-                monthlyRewards.add(new MonthlyReward(year, month, totalPoints));
+                monthlyRewards.add(new MonthlyReward(year.toString(), month, totalPoints));
             }
         }
 
@@ -81,11 +80,11 @@ public class RewardsService {
         return rewardPoints;
     }
 
-    private String getYear(Date date) {
-        return YearMonth.from(date.toInstant()).getYear() + "";
+    private int getYear(LocalDate date) {
+        return date.getYear();
     }
 
-    private String getMonth(Date date) {
-        return YearMonth.from(date.toInstant()).format(DateTimeFormatter.ofPattern("MMMM"));
+    private String getMonth(LocalDate date) {
+        return date.format(DateTimeFormatter.ofPattern("MMMM"));
     }
 }
