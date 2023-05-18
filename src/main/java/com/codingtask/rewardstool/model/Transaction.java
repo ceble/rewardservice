@@ -1,11 +1,10 @@
 package com.codingtask.rewardstool.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 
-@Document(collection = "transactions")
+
 public class Transaction {
     @Id
     private String transactionId;

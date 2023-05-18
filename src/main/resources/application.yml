@@ -1,10 +1,10 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/mydatabase
-      database: mydatabase
-      username: myusername
-      password: mypassword
+      uri: mongodb://localhost:27017/database
+      database: database
+      username: mongoadmin
+      password: secret
 
 server:
   port: 8080
